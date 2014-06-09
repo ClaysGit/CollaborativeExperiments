@@ -21,7 +21,8 @@ namespace GoogleCalendarController
         string token;
         CalendarService service;
 
-        // our main object for manipulating the calendar
+        // This is the initializer for our controller. It creates the main CalendarService, from which most of the magic happens
+        // this also fires up our Open Auth Manager, which logs the user into their Google account and generates an access token
         public googleCalendarController()
         {
             //Use the OAuthManager form to get an OAuth token...
@@ -38,30 +39,36 @@ namespace GoogleCalendarController
                 ApplicationName = "MenuMaster"
             });
         }
-
-        public void addCalendar(string summary, string timeZone)
+        // Generates a new Calendar object
+        public Calendar newCalender(string summary, string timeZone)
         {
-            // first, we make a new calendar!
+            // Create a new calendar object
             Calendar newCal = new Calendar();
 
-            // then we add the proper info
+            // Add some parameters. Needs expanding.
             newCal.Summary = summary;
             newCal.TimeZone = timeZone;
 
-            // then we make a request object, set the OAuth token, and execute
+            // Create a request object, set the OAuth token, and execute
             var newCalRequest = service.Calendars.Insert(newCal);
             newCalRequest.OauthToken = token;
-            var createdNewCal = newCalRequest.Execute();
+            return newCalRequest.Execute();
 
-            // create an entry. all we need now is the Id which was automatically generated above, in createdNewCal
+        }
+        // Adds an existing calendar to the list of available calendars
+        public CalendarListEntry addCalendar(Calendar addCal)
+        {
+            // Create a new entry object, then set the Id field to that of the given Calendar. This tells the API which Calendar object
+            // we are trying to add
             CalendarListEntry calEntry = new CalendarListEntry();
-            calEntry.Id = createdNewCal.Id;
+            calEntry.Id = addCal.Id;
 
-            // now we create our new insert request, add our authorization token to the insertRequest object, and execute the sucker!
+            // Now we create an insert request object. This holds all the data we need to actually execute our desired action
             var calInsertRequest = service.CalendarList.Insert(calEntry);
+            // Set the authorization token
             calInsertRequest.OauthToken = token;
-
-            var calInsert = calInsertRequest.Execute();
+            // And now we execute!
+            return calInsertRequest.Execute();
         }
     }
 }

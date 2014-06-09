@@ -63,7 +63,8 @@ namespace Launcher
 
             var controller = new googleCalendarController();
 
-            controller.addCalendar("Test", "America/Detroit");
+            var cal = controller.newCalender("test", "America/Detroit");
+            var calEntry = controller.addCalendar(cal);
 
             Console.WriteLine("Press Enter to exit");
 
