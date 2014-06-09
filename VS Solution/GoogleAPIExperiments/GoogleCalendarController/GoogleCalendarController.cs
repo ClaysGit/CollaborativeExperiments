@@ -41,16 +41,27 @@ namespace GoogleCalendarController
 
         public void addCalendar(string summary, string timeZone)
         {
-            //create the new calendar entry we are about to add
-            CalendarListEntry calBody = new CalendarListEntry();
-            calBody.SummaryOverride = summary;
-            calBody.Id = "test";
+            // first, we make a new calendar!
+            Calendar newCal = new Calendar();
+
+            // then we add the proper info
+            newCal.Summary = summary;
+            newCal.TimeZone = timeZone;
+
+            // then we make a request object, set the OAuth token, and execute
+            var newCalRequest = service.Calendars.Insert(newCal);
+            newCalRequest.OauthToken = token;
+            var createdNewCal = newCalRequest.Execute();
+
+            // create an entry. all we need now is the Id which was automatically generated above, in createdNewCal
+            CalendarListEntry calEntry = new CalendarListEntry();
+            calEntry.Id = createdNewCal.Id;
 
             // now we create our new insert request, add our authorization token to the insertRequest object, and execute the sucker!
-            var  calInsertRequest = service.CalendarList.Insert(calBody);
+            var calInsertRequest = service.CalendarList.Insert(calEntry);
             calInsertRequest.OauthToken = token;
+
             var calInsert = calInsertRequest.Execute();
         }
-            
     }
 }
