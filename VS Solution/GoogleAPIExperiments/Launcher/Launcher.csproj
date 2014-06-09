@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Launcher.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.Apis">
       <HintPath>..\packages\Google.Apis.1.8.2\lib\net40\Google.Apis.dll</HintPath>
@@ -93,6 +96,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GoogleCalendarController\GoogleCalendarController.csproj">
+      <Project>{ffb70ebb-ad70-425b-ba6f-9cd35f35d454}</Project>
+      <Name>GoogleCalendarController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OAuthManager\OAuthManager.csproj">
       <Project>{5a22274b-c9a3-4fed-a52d-5d258316a3ed}</Project>
       <Name>OAuthManager</Name>

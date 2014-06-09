@@ -13,6 +13,9 @@ using Google.Apis.Services;
 //Reference our hand-crafted OAuthManager to get tokens for us.
 using OAuthManager;
 
+//Reference our Google Calendar library
+using GoogleCalendarController;
+
 namespace Launcher
 {
     class Program
@@ -23,7 +26,7 @@ namespace Launcher
         [STAThread]
         static void Main(string[] args)
         {
-            //Use the OAuthManager form to get an OAuth token...
+/*          //Use the OAuthManager form to get an OAuth token...
             var token = "";
             using(var tokenForm = new OAuthTokenManagerForm())
             {
@@ -49,13 +52,23 @@ namespace Launcher
             //Write the ID of each calendar
             foreach (var cal in cals.Items)
             {
-                Console.WriteLine(cal.Id);
+//                Console.WriteLine(cal.Id);
+                System.Diagnostics.Debug.WriteLine(cal.Id);
             }
 
             Console.WriteLine();
             Console.WriteLine("Press Enter to quit...");
 
+            Console.ReadLine(); */
+
+            var controller = new googleCalendarController();
+
+            controller.addCalendar("Test", "America/Detroit");
+
+            Console.WriteLine("Press Enter to exit");
+
             Console.ReadLine();
+
         }
     }
 }
