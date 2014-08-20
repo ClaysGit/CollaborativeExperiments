@@ -13,13 +13,15 @@ namespace XmlAndStuff
 	{
 		static void Main( string[] args )
 		{
-			//Let's assume that the first arg is the xml file for program config..
-			//The second goes to definitions..
-			//The third goes to normal data...stored info about the subsequent days
+			var programConfigPath = "config.xml";
+			var definitionsPath = "definitions.xml";
+			var dataPath = "data.xml";
 
-			var programConfiguration = DeserializeXmlObject<ProgramConfiguration>( args[ 0 ] );
-			var definitions = DeserializeXmlObject<Definitions>( args[ 1 ] );
-			var loadedData = DeserializeXmlObject<Data>( args[ 2 ] );
+			GuaranteeFiles( programConfigPath, definitionsPath, dataPath );
+
+			var programConfiguration = DeserializeXmlObject<ProgramConfiguration>( programConfigPath );
+			var definitions = DeserializeXmlObject<Definitions>( definitionsPath );
+			var loadedData = DeserializeXmlObject<Data>( dataPath );
 
 			if ( !definitions.MealTypes.Any() )
 			{
@@ -51,7 +53,18 @@ namespace XmlAndStuff
 				} );
 			}
 
-			SerializeXmlObject<Definitions>( definitions, args[ 1 ] );
+			SerializeXmlObject<Definitions>( definitions, definitionsPath );
+
+			if ( !loadedData.DayDefaults.Any() )
+			{
+				loadedData.DayDefaults.Add( new DayMetadata()
+					{
+						DayName = "Sunday",
+						DayNum = 0,
+						DefaultDayTypeID = definitions.DayTypes[0].ID,
+						ID = Guid.NewGuid()
+					} );
+			}
 
 			loadedData.SpecifiedDays.Add( new Day()
 			{
@@ -65,7 +78,7 @@ namespace XmlAndStuff
 				SpecifiedDate = DateTime.Now
 			} );
 
-			SerializeXmlObject<Data>( loadedData, args[ 2 ] );
+			SerializeXmlObject<Data>( loadedData, dataPath );
 
 
 
@@ -73,7 +86,7 @@ namespace XmlAndStuff
 			//This helps us load/store all the good info...but it's not really easy to work with yet...
 			// To ACTUALLY operate on the data, we might do this:
 			var recipeTypesByID = definitions.RecipeTypes.ToDictionary( r => r.ID );
-			
+
 			//Now we can look up a recipe by it's ID really cleanly...
 			var recipeID = loadedData.SpecifiedDays.Last().Meals.First().SelectedRecipeID;
 			var todaysRecipe = recipeTypesByID[ recipeID ];
@@ -107,8 +120,32 @@ namespace XmlAndStuff
 			}
 		}
 
+		public static void GuaranteeFiles( string programConfigPath, string definitionsPath, string dataPath )
+		{
+			if ( !File.Exists( programConfigPath ) )
+			{
+				SerializeXmlObject<ProgramConfiguration>( new ProgramConfiguration(), programConfigPath );
+			}
+
+			if ( !File.Exists( definitionsPath ) )
+			{
+				SerializeXmlObject<Definitions>( new Definitions(), definitionsPath );
+			}
+
+			if ( !File.Exists( dataPath ) )
+			{
+				SerializeXmlObject<Data>( new Data(), dataPath );
+			}
+		}
+
 		public class ProgramConfiguration
 		{
+			public ProgramConfiguration()
+			{
+				Username = "";
+				CalendarName = "";
+			}
+
 			public string Username { get; set; }
 			public int RefreshToken { get; set; }
 			public string CalendarName { get; set; }

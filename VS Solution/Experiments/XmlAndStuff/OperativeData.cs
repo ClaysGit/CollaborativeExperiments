@@ -9,6 +9,11 @@ namespace XmlAndStuff
 	//Days whose weekday number matches DayNum are assigned this metadata.
 	public class DayMetadata
 	{
+		public DayMetadata()
+		{
+			DayName = "";
+		}
+
 		public Guid ID { get; set; }
 		public int DayNum { get; set; }
 		public string DayName { get; set; }
@@ -23,6 +28,11 @@ namespace XmlAndStuff
 
 	public class Day
 	{
+		public Day()
+		{
+			Meals = new List<Meal>();
+		}
+
 		public DateTime SpecifiedDate { get; set; }
 		public Guid DayMetadataID { get; set; }
 		public Guid CurrentDayTypeID { get; set; }
@@ -31,6 +41,12 @@ namespace XmlAndStuff
 
 	public class Data
 	{
+		public Data()
+		{
+			DayDefaults = new List<DayMetadata>();
+			SpecifiedDays = new List<Day>();
+		}
+
 		//Defaults are specified for a day by which day of the week it is.
 		// Therefore, we need 7 defaults, one for each day of the week.
 		// Therefore, we should assume (or assert) that this array is always 7 length.
